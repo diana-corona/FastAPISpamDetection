@@ -1,24 +1,13 @@
 import joblib
-import re
 from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from fastapi import FastAPI
-from preprocessor import preprocessor
+from classify_message import classify_message
 
 app = FastAPI()
 #handling the requests for our REST API for different URI
 
 model = joblib.load('spam_classifier.joblib')
-
-
-def classify_message(model, message):
-	message = preprocessor(message)
-	#preprocess message like during the training
-	label = model.predict([message])[0]
-	#predict
-	spam_prob = model.predict_proba([message])
-	#calculate probability
-	return {'label': label, 'spam_probability': spam_prob[0][1]}
 
 @app.get('/')
 def get_root():

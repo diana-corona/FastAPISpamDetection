@@ -16,7 +16,7 @@ from preprocessor import preprocessor
 
 
 # Train, Test Split
-data = pd.read_csv('SPAM.csv')
+data = pd.read_csv('data/SPAM.csv')
 
 X = data['Message'].apply(preprocessor)
 y = data['Category']
@@ -28,8 +28,11 @@ max_features = 700
 tfidf = TfidfVectorizer(strip_accents=None, lowercase=False, 
                         max_features=max_features, 
                         ngram_range=(1,1))
+
+mplclassifier = MLPClassifier(hidden_layer_sizes=(max_features, max_features),activation='relu',solver='adam',learning_rate='constant')
+
 neural_net_pipeline = Pipeline([('vectorizer', tfidf), 
-                                ('nn', MLPClassifier(hidden_layer_sizes=(max_features, max_features)))])
+                                ('nn', mplclassifier)])
 
 neural_net_pipeline.fit(X_train, y_train)
 
