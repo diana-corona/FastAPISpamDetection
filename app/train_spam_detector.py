@@ -16,7 +16,7 @@ from preprocessor import preprocessor
 
 
 # Train, Test Split
-data = pd.read_csv('data/SPAM.csv')
+data = pd.read_csv('SPAM.csv')
 
 X = data['Message'].apply(preprocessor)
 y = data['Category']
