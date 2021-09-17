@@ -1,9 +1,9 @@
-name: Serverless-FastAPI-AWS-Lambda
+name: Venv-Github-workflow
 
 on:
   push:
     branches:
-      Serverless-FastAPI-AWS-Lambda
+      Venv-Github-workflow
 
 jobs:
   CI:
