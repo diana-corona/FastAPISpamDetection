@@ -1,9 +1,6 @@
 # FastAPISpamDetection
 
-### Spam Text Message Classification Data
-Obtained from
-
-https://www.kaggle.com/team-ai/spam-text-message-classification
+Using FASTAPI, python virtual eviroments, and Github workflows an api to use the SpamDetection trainned model is built and tested 
 
 ### Virtual eviroment
 
