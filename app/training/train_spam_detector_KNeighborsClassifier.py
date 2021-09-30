@@ -6,7 +6,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, classification_report
-from sklearn.neural_network import MLPClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
 from joblib import dump
 
@@ -16,7 +16,7 @@ from preprocessor import preprocessor
 
 
 # Train, Test Split
-data = pd.read_csv('data/SPAM.csv')
+data = pd.read_csv('training/data/SPAM.csv')
 
 X = data['Message'].apply(preprocessor)
 y = data['Category']
@@ -29,17 +29,17 @@ tfidf = TfidfVectorizer(strip_accents=None, lowercase=False,
                         max_features=max_features, 
                         ngram_range=(1,1))
 
-mplclassifier = MLPClassifier(hidden_layer_sizes=(max_features, max_features),activation='relu',solver='adam',learning_rate='constant')
+kNeighbors = KNeighborsClassifier(n_neighbors=5, weights='uniform', algorithm='auto', leaf_size=30, p=2, metric='minkowski', metric_params=None, n_jobs=None)
 
-neural_net_pipeline = Pipeline([('vectorizer', tfidf), 
-                                ('nn', mplclassifier)])
+kNeighbors_pipeline = Pipeline([('vectorizer', tfidf), 
+                                ('nn', kNeighbors)])
 
-neural_net_pipeline.fit(X_train, y_train)
+kNeighbors_pipeline.fit(X_train, y_train)
 
 # Testing the Pipeline
-y_pred = neural_net_pipeline.predict(X_test)
+y_pred = kNeighbors_pipeline.predict(X_test)
 print(classification_report(y_test, y_pred))
-print('Accuracy: {} %'.format(100 * accuracy_score(y_test, y_pred)))
+print('kNeighbors Accuracy : {} %'.format(100 * accuracy_score(y_test, y_pred)))
 
 # Save
-dump(neural_net_pipeline, 'spam_classifier.joblib')
+dump(kNeighbors_pipeline, 'models/spam_classifier_KNeighbors.joblib')
