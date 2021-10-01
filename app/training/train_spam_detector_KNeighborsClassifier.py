@@ -25,11 +25,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # Training a Neural Network Pipeline
 max_features = 700
+n_neighbors = 2
 tfidf = TfidfVectorizer(strip_accents=None, lowercase=False, 
                         max_features=max_features, 
                         ngram_range=(1,1))
 
-kNeighbors = KNeighborsClassifier(n_neighbors=5, weights='uniform', algorithm='auto', leaf_size=30, p=2, metric='minkowski', metric_params=None, n_jobs=None)
+kNeighbors = KNeighborsClassifier(n_neighbors=n_neighbors, weights='uniform', algorithm='auto', leaf_size=30, p=2, metric='minkowski', metric_params=None, n_jobs=None)
 
 kNeighbors_pipeline = Pipeline([('vectorizer', tfidf), 
                                 ('nn', kNeighbors)])
