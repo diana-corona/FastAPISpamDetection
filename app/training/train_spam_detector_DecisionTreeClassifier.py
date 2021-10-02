@@ -40,4 +40,4 @@ print(classification_report(y_test, y_pred))
 print('DecisionTree Accuracy : {} %'.format(100 * accuracy_score(y_test, y_pred)))
 
 # Save
-dump(DecisionTree_pipeline, 'models/spam_classifier_DecisionTreeClassifier.joblib')
+dump(DecisionTree_pipeline, 'models/spam_classifier_DecisionTree.joblib')
