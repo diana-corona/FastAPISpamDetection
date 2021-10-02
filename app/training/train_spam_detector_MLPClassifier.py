@@ -12,9 +12,6 @@ from joblib import dump
 
 from preprocessor import preprocessor
 
-# Text Preprocessing
-
-
 # Train, Test Split
 data = pd.read_csv('training/data/SPAM.csv')
 
@@ -31,15 +28,15 @@ tfidf = TfidfVectorizer(strip_accents=None, lowercase=False,
 
 mplclassifier = MLPClassifier(hidden_layer_sizes=(max_features, max_features),activation='relu',solver='adam',learning_rate='constant')
 
-neural_net_pipeline = Pipeline([('vectorizer', tfidf), 
+MLPClassifier_pipeline = Pipeline([('vectorizer', tfidf), 
                                 ('nn', mplclassifier)])
 
-neural_net_pipeline.fit(X_train, y_train)
+MLPClassifier_pipeline.fit(X_train, y_train)
 
 # Testing the Pipeline
-y_pred = neural_net_pipeline.predict(X_test)
+y_pred = MLPClassifier_pipeline.predict(X_test)
 print(classification_report(y_test, y_pred))
 print('MLPClassifier Accuracy : {} %'.format(100 * accuracy_score(y_test, y_pred)))
 
 # Save
-dump(neural_net_pipeline, 'models/spam_classifier_MLPClassifier.joblib')
+dump(MLPClassifier_pipeline, 'models/spam_classifier_MLPClassifier.joblib')
