@@ -1,5 +1,3 @@
-from sklearn.neural_network import MLPClassifier
-from sklearn.feature_extraction.text import TfidfVectorizer
 from fastapi import FastAPI
 from classify_message import classify_message
 from load_model import load_model
