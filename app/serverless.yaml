@@ -1,0 +1,77 @@
+service: serverless-spam-detection-fastapi  ##name of the service
+
+configValidationMode: error
+
+package:
+  individually: true
+
+plugins:
+  - serverless-python-requirements
+provider:
+  name: aws
+  runtime: python3.7 ##python version
+  region: us-east-1 ##region of s3 bucket with model 
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, "dev"}
+
+  deploymentBucket:
+    name: serverless-spam-detection ## name of s3 bucket with model 
+
+  iamRoleStatements: ## allow role to read from s3 
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource:
+        - "arn:aws:s3:::serverless-spam-detection/*"  ## name of s3 bucket with model 
+
+custom:
+  pythonRequirements:
+    slim: true
+    layer: true ## add requirements as layer
+    useDownloadCache: true 
+    useStaticCache: true
+
+functions:
+  fastapi_spam_detection_api:
+    name:  fastapi_spam_detection_api ## aws lambda function
+    description: serverless spam detection lambda
+    handler: main.handler
+    package:
+      include:
+        - "main.py"
+        - "load_model.py"
+        - "preprocessor.py"
+        - "classify_message.py"
+      exclude:
+        - "requirements.txt"
+        - "package.json"
+        - "package-lock.json"
+        - ".serverless/**"
+        - ".virtualenv/**"
+        - "node_modules/**"
+    environment:
+      STAGE: ${self:provider.stage}
+    layers:
+      - arn:aws:lambda:us-east-1:446751924810:layer:python-3-7-scikit-learn-0-22-0:3
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - http: 
+          path:  /
+          method: GET
+          cors: true
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:086948990359:function:spam-authorizer-lambda  ## aws lambda authorizer function
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+            type: token
+      - http: 
+          path:  /{proxy+}
+          method: GET
+          cors: true
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:086948990359:function:spam-authorizer-lambda  ## aws lambda authorizer function
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+            type: token

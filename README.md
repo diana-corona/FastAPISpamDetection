@@ -5,26 +5,17 @@ Obtained from
 
 https://www.kaggle.com/team-ai/spam-text-message-classification
 
+### Tutorial on how to deploy fast api on aws
+https://adem.sh/blog/tutorial-fastapi-aws-lambda-serverless
 
-### Using the model on Jupyter notebooks
-A Jupiter notebook demo with the models bb	is available in FastAPISpamDetection_demo.ipynb
+### To deploy on serverless
+```
+cd app
+serverless deploy
+```
 
-### Deploying the App on Docker
-The docker file:
-1. Pulls the FastAPI docker image.
-1. Copies the app directory to the docker image.
-1. Set the app directory as the working directory.
-1. Install requirements listed in requirements.txt
-1. Train the models
-
-To build the docker image run (this will train the model)
-```
-docker build -t spam-detection .
-```
-To run the docker image run (this will deploy the API)
-```
-docker run -d --name spam-detection -p 80:80 spam-detection
-```
+### To deploy on Docker
+https://github.com/diana-corona/FastAPISpamDetection.git
 
 ### API Automatically Generated Documentation
 The API documentation is generated automatically by FASTAPI, 
@@ -39,12 +30,6 @@ For example:
 
 http://localhost/spam_detection_query/?message=WINNER
 
-### Path Variables
-In Path Variables, the input data is passed to the API as a path in the URL
-
-For example:
-
-http://localhost/spam_detection_path/Hi
 
 ### Data preprocesing  
 The data was preprocessed by 
@@ -61,14 +46,3 @@ The data was randomly separed in using sklearn train_test_split.
 1. KNeighbors has an accuracy of 93.36%
 1. DecisionTreeClassifier has an accuracy of 95.96%
 1. RandomForestClassifier has an accuracy of 97.04%
-
-
-### MLPClassifier details
-1. TFIDF vectorizer
-1. 700 hidden layers 
-1. Relu activation function
-1. Adam Optimization Algorithm 
-1. Constant learning rate
-
-https://scikit-learn.org/stable/modules/neural_networks_supervised.html
-
