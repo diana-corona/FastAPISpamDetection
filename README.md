@@ -15,7 +15,7 @@ serverless deploy
 ```
 
 ### To deploy on Docker
-https://github.com/diana-corona/FastAPISpamDetection.git
+check docker branch
 
 ### API Automatically Generated Documentation
 The API documentation is generated automatically by FASTAPI, 
