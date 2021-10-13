@@ -1,5 +1,6 @@
 import joblib
 from preprocessor import preprocessor
+import sklearn
 
 def classify_message(model, message):
 	message = preprocessor(message)
@@ -8,4 +9,4 @@ def classify_message(model, message):
 	#predict
 	spam_prob = model.predict_proba([message])
 	#calculate probability
-	return {'label': label, 'spam_probability': spam_prob[0][1]}
+	return {'label': label, 'spam_probability': spam_prob[0][1],'message':message}
