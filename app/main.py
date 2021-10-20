@@ -9,24 +9,23 @@ app = FastAPI()
 def get_root():
 	return {'message': 'Welcome to the spam detection API'}
 
-
-@app.get('/spam_detection_query/MLPClassifier/')
-async def detect_spam_query(message: str):
+@app.get('/Mlpclassifiers/')
+async def Mlpclassifiers(message: str):
 	sel_model = load_model('MLPClassifier');
 	return classify_message(sel_model, message)
 
-@app.get('/spam_detection_query/KNeighbors/')
-async def detect_spam_query(message: str):
+@app.get('/Kneighbors/')
+async def Kneighbors(message: str):
 	sel_model = load_model('KNeighbors');
 	return classify_message(sel_model, message)
 
-@app.get('/spam_detection_query/DecisionTree/')
-async def detect_spam_query(message: str):
+@app.get('/Decisiontrees/')
+async def Decisiontrees(message: str):
 	sel_model = load_model('DecisionTree');
 	return classify_message(sel_model, message)
 
-@app.get('/spam_detection_query/RandomForest/')
-async def detect_spam_query(message: str):
+@app.get('/Randomforests/')
+async def Randomforests(message: str):
 	sel_model = load_model('RandomForest');
 	return classify_message(sel_model, message)
 
