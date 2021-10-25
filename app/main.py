@@ -84,25 +84,25 @@ async def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
 
 @app.get('/')
-def get_root():
+def get_root(current_user: User = Depends(get_current_user)):
 	return {'message': 'Welcome to the spam detection API'}
 
 @app.get('/Mlpclassifiers/')
-async def Mlpclassifiers(message: str):
+async def Mlpclassifiers(message: str,current_user: User = Depends(get_current_user)):
 	sel_model = load_model('MLPClassifier');
 	return classify_message(sel_model, message)
 
 @app.get('/Kneighbors/')
-async def Kneighbors(message: str):
+async def Kneighbors(message: str,current_user: User = Depends(get_current_user)):
 	sel_model = load_model('KNeighbors');
 	return classify_message(sel_model, message)
 
 @app.get('/Decisiontrees/')
-async def Decisiontrees(message: str):
+async def Decisiontrees(message: str,current_user: User = Depends(get_current_user)):
 	sel_model = load_model('DecisionTree');
 	return classify_message(sel_model, message)
 
 @app.get('/Randomforests/')
-async def Randomforests(message: str):
+async def Randomforests(message: str,current_user: User = Depends(get_current_user)):
 	sel_model = load_model('RandomForest');
 	return classify_message(sel_model, message)
