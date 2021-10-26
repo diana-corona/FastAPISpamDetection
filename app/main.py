@@ -1,103 +1,18 @@
 from typing import Optional
 
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from pydantic import BaseModel
-
-from datetime import datetime, timedelta
-from jose import JWTError, jwt
-from passlib.context import CryptContext
+from datetime import timedelta
+from fastapi import Depends, FastAPI, Query, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 
 from classify_message import classify_message
 from load_model import load_model
 
-SECRET_KEY = "035dda8450f218f80ef5dda7ee3093df00e04684b75bb1beb1689bda8d951102"
-ALGORITHM = "HS256"
+from login_functions import verify_password, get_password_hash, get_user, authenticate_user, create_access_token, get_current_user, get_current_active_user, fake_users_db
+from login_classes import Token, User
+
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 app = FastAPI()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
-    }
-}
-
-class Token(BaseModel):
-	access_token: str
-	token_type: str
-
-class TokenData(BaseModel):
-	username: Optional[str] = None
-
-class User(BaseModel):
-	username: str
-	email: Optional[str] = None
-	full_name: Optional[str] = None
-	disabled: Optional[bool] = None
-
-
-class UserInDB(User):
-	hashed_password: str
-
-def verify_password(plain_password, hashed_password):
-	return pwd_context.verify(plain_password, hashed_password)
-
-def get_password_hash(password):
-	return pwd_context.hash(password)
-
-def get_user(db, username: str):
-	if username in db:
-		user_dict = db[username]
-		return UserInDB(**user_dict)
-
-def authenticate_user(fake_db, username: str, password: str):
-	user = get_user(fake_db, username)
-	if not user:
-		return False
-	if not verify_password(password, user.hashed_password):
-		return False
-	return user
-
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-	to_encode = data.copy()
-	if expires_delta:
-		expire = datetime.utcnow() + expires_delta
-	else:
-		expire = datetime.utcnow() + timedelta(minutes=15)
-	to_encode.update({"exp": expire})
-	encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-	return encoded_jwt
-
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-	credentials_exception = HTTPException(
-		status_code=status.HTTP_401_UNAUTHORIZED,
-		detail="Could not validate credentials",
-		headers={"WWW-Authenticate": "Bearer"},
-	)
-	try:
-		payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-		username: str = payload.get("sub")
-		if username is None:
-			raise credentials_exception
-		token_data = TokenData(username=username)
-	except JWTError:
-		raise credentials_exception
-	user = get_user(fake_users_db, username=token_data.username)
-	if user is None:
-		raise credentials_exception
-	return user
-
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -115,29 +30,29 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/users/me")
-async def read_users_me(current_user: User = Depends(get_current_user)):
+async def read_users_me(current_user: User = Depends(get_current_active_user)):
 	return current_user
 
 @app.get('/')
-def get_root(current_user: User = Depends(get_current_user)):
+def get_root(current_user: User = Depends(get_current_active_user)):
 	return {'message': 'Welcome to the spam detection API'}
 
 @app.get('/Mlpclassifiers/')
-async def Mlpclassifiers(message: str,current_user: User = Depends(get_current_user)):
+async def Mlpclassifiers(message: Optional[str] = Query(None, max_length=250),current_user: User = Depends(get_current_active_user)):
 	sel_model = load_model('MLPClassifier');
 	return classify_message(sel_model, message)
 
 @app.get('/Kneighbors/')
-async def Kneighbors(message: str,current_user: User = Depends(get_current_user)):
+async def Kneighbors(message: Optional[str] = Query(None, max_length=250),current_user: User = Depends(get_current_active_user)):
 	sel_model = load_model('KNeighbors');
 	return classify_message(sel_model, message)
 
 @app.get('/Decisiontrees/')
-async def Decisiontrees(message: str,current_user: User = Depends(get_current_user)):
+async def Decisiontrees(message: Optional[str] = Query(None, max_length=250),current_user: User = Depends(get_current_active_user)):
 	sel_model = load_model('DecisionTree');
 	return classify_message(sel_model, message)
 
 @app.get('/Randomforests/')
-async def Randomforests(message: str,current_user: User = Depends(get_current_user)):
+async def Randomforests(message: Optional[str] = Query(None, max_length=250),current_user: User = Depends(get_current_active_user)):
 	sel_model = load_model('RandomForest');
 	return classify_message(sel_model, message)
