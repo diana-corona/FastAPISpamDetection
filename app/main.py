@@ -7,17 +7,22 @@ from fastapi.security import OAuth2PasswordRequestForm
 from classify_message import classify_message
 from load_model import load_model
 
-from login_functions import verify_password, get_password_hash, get_user, authenticate_user, create_access_token, get_current_user, get_current_active_user, fake_users_db
-from login_classes import Token, User
+from login_functions import verify_password, get_current_active_user,fake_users_db
+from login_schemas import Token, User
+
+import services as _services
+from sqlalchemy.orm import Session
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 app = FastAPI()
 
+_services.create_database()
+
 @app.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
-    if not user:
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(_services.get_db)):
+    user = _services.get_user_by_username(db=db, username=form_data.username)
+    if not user or not verify_password(form_data.password,user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
