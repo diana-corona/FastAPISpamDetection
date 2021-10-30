@@ -1,5 +1,5 @@
 import database 
-import sqlalchemy.orm 
+import sqlalchemy.orm as orm
 import db_models
 import login_schemas 
 
