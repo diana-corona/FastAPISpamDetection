@@ -62,13 +62,3 @@ The data was randomly separed in using sklearn train_test_split.
 1. DecisionTreeClassifier has an accuracy of 95.96%
 1. RandomForestClassifier has an accuracy of 97.04%
 
-
-### MLPClassifier details
-1. TFIDF vectorizer
-1. 700 hidden layers 
-1. Relu activation function
-1. Adam Optimization Algorithm 
-1. Constant learning rate
-
-https://scikit-learn.org/stable/modules/neural_networks_supervised.html
-
