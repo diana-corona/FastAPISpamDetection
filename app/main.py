@@ -8,7 +8,7 @@ from classify_message import classify_message
 from load_model import load_model
 
 from login_functions import verify_password, get_current_active_user,fake_users_db
-from login_schemas import Token, User
+from login_schemas import Token, UserBase, UserCreate
 
 import services as _services
 from sqlalchemy.orm import Session
@@ -34,30 +34,38 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+@app.post("/users/", response_model=UserBase)
+def create_user(user: UserCreate, db: Session = Depends(_services.get_db)):
+    user_db = _services.get_user_by_username(db=db, username=user.username)
+    if user_db:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    return _services.create_user(db=db, user=user)
+
+
 @app.get("/users/me")
-async def read_users_me(current_user: User = Depends(get_current_active_user)):
+async def read_users_me(current_user: UserBase = Depends(get_current_active_user)):
 	return current_user
 
 @app.get('/')
-def get_root(current_user: User = Depends(get_current_active_user)):
+def get_root(current_user: UserBase = Depends(get_current_active_user)):
 	return {'message': 'Welcome to the spam detection API'}
 
 @app.get('/Mlpclassifiers/')
-async def Mlpclassifiers(message: Optional[str] = Query(None, max_length=250),current_user: User = Depends(get_current_active_user)):
+async def Mlpclassifiers(message: Optional[str] = Query(None, max_length=250),current_user: UserBase = Depends(get_current_active_user)):
 	sel_model = load_model('MLPClassifier');
 	return classify_message(sel_model, message)
 
 @app.get('/Kneighbors/')
-async def Kneighbors(message: Optional[str] = Query(None, max_length=250),current_user: User = Depends(get_current_active_user)):
+async def Kneighbors(message: Optional[str] = Query(None, max_length=250),current_user: UserBase = Depends(get_current_active_user)):
 	sel_model = load_model('KNeighbors');
 	return classify_message(sel_model, message)
 
 @app.get('/Decisiontrees/')
-async def Decisiontrees(message: Optional[str] = Query(None, max_length=250),current_user: User = Depends(get_current_active_user)):
+async def Decisiontrees(message: Optional[str] = Query(None, max_length=250),current_user: UserBase = Depends(get_current_active_user)):
 	sel_model = load_model('DecisionTree');
 	return classify_message(sel_model, message)
 
 @app.get('/Randomforests/')
-async def Randomforests(message: Optional[str] = Query(None, max_length=250),current_user: User = Depends(get_current_active_user)):
+async def Randomforests(message: Optional[str] = Query(None, max_length=250),current_user: UserBase = Depends(get_current_active_user)):
 	sel_model = load_model('RandomForest');
 	return classify_message(sel_model, message)

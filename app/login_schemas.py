@@ -8,14 +8,17 @@ class Token(BaseModel):
 class TokenData(BaseModel):
 	username: Optional[str] = None
 
-class User(BaseModel):
-	id: int
+class UserBase(BaseModel):
+	user_id: int
 	username: str
-	hashed_password: str
 	email: str
 	full_name: Optional[str] = None
-	disabled: Optional[bool] = None
+	disabled: Optional[bool] = False
+	class Config:
+		orm_mode=True
 
+class UserCreate(UserBase):
+	password: str
 
-class UserInDB(User):
+class UserInDB(UserBase):
 	hashed_password: str

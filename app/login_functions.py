@@ -4,7 +4,7 @@ from jose import JWTError, jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-from login_schemas import TokenData, UserInDB, User
+from login_schemas import TokenData, UserInDB, UserBase
 
 import services as _services
 import sqlalchemy.orm as _orm
@@ -65,7 +65,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 		raise credentials_exception
 	return user
 
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
+async def get_current_active_user(current_user: UserBase = Depends(get_current_user)):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
