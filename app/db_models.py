@@ -1,13 +1,13 @@
-import sqlalchemy as _sql
-import database as _database
+import sqlalchemy as sql
+import database as db
 
 
-class User(_database.Base):
+class User(db.Base):
 	__tablename__ = "users"
-	user_id = _sql.Column(_sql.Integer, primary_key=True, index=True)
-	username = _sql.Column(_sql.String, unique=True, index=True)
-	email = _sql.Column(_sql.String, unique=True, index=True)
-	full_name = _sql.Column(_sql.String)
-	hashed_password = _sql.Column(_sql.String)
-	disabled = _sql.Column(_sql.Boolean, default=False)
+	user_id = sql.Column(sql.Integer, primary_key=True, index=True)
+	username = sql.Column(sql.String, unique=True, index=True)
+	email = sql.Column(sql.String, unique=True, index=True)
+	full_name = sql.Column(sql.String)
+	hashed_password = sql.Column(sql.String)
+	disabled = sql.Column(sql.Boolean, default=False)
 

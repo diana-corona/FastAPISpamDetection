@@ -7,7 +7,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from classify_message import classify_message
 from load_model import load_model
 
-from login_functions import verify_password, get_current_active_user,fake_users_db,create_access_token
+
+from pwd_functions import verify_password
+from login_functions import  get_current_active_user,create_access_token
 from login_schemas import Token, UserBase, UserCreate
 
 import db_functions

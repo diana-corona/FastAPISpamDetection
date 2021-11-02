@@ -2,10 +2,7 @@ import database
 import sqlalchemy.orm as orm
 import db_models
 import login_schemas 
-from login_functions import get_password_hash
-
-from passlib.context import CryptContext
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from pwd_functions import get_password_hash
 
 def create_database():
 	return database.Base.metadata.create_all(bind=database.engine)
