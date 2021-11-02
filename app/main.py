@@ -10,18 +10,18 @@ from load_model import load_model
 from login_functions import verify_password, get_current_active_user,fake_users_db,create_access_token
 from login_schemas import Token, UserBase, UserCreate
 
-import services as _services
+import db_functions
 from sqlalchemy.orm import Session
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 app = FastAPI()
 
-_services.create_database()
+db_functions.create_database()
 
 @app.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(_services.get_db)):
-    user = _services.get_user_by_username(db=db, username=form_data.username)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(db_functions.get_db)):
+    user = db_functions.get_user_by_username(db=db, username=form_data.username)
     if not user or not verify_password(form_data.password,user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -35,11 +35,11 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/users/", response_model=UserBase)
-def create_user(user: UserCreate, db: Session = Depends(_services.get_db)):
-    user_db = _services.get_user_by_username(db=db, username=user.username)
+def create_user(user: UserCreate, db: Session = Depends(db_functions.get_db)):
+    user_db = db_functions.get_user_by_username(db=db, username=user.username)
     if user_db:
         raise HTTPException(status_code=400, detail="Username already registered")
-    return _services.create_user(db=db, user=user)
+    return db_functions.create_user(db=db, user=user)
 
 
 @app.get("/users/me")
