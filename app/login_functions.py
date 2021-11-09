@@ -11,18 +11,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 SECRET_KEY = "035dda8450f218f80ef5dda7ee3093df00e04684b75bb1beb1689bda8d951102"
 ALGORITHM = "HS256"
 
-
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
-    }
-}
-
-
 def get_user(db: orm.Session, username: str):
 	user =  get_user_by_username(db=db, username= username)
 	if user :
@@ -38,7 +26,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 	encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 	return encoded_jwt
 
-async def get_current_user(db: orm.Session = Depends(get_db),token: str = Depends(oauth2_scheme)):
+async def get_current_user(db: orm.Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
 	credentials_exception = HTTPException(
 		status_code=status.HTTP_401_UNAUTHORIZED,
 		detail="Could not validate credentials",

@@ -49,7 +49,7 @@ async def read_users_me(current_user: UserBase = Depends(get_current_active_user
 	return current_user
 
 @app.get('/')
-def get_root(current_user: UserBase = Depends(get_current_active_user)):
+def get_root():
 	return {'message': 'Welcome to the spam detection API'}
 
 @app.get('/Mlpclassifiers/')

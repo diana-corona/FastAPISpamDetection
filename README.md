@@ -57,8 +57,8 @@ The data was randomly separed in using sklearn train_test_split.
 80% of the data was used to train 
 20% of the data was used to test the model and get the accuracy
 
+
 1. MLPClassifier has an accuracy of 98.29%
 1. KNeighbors has an accuracy of 93.36%
 1. DecisionTreeClassifier has an accuracy of 95.96%
 1. RandomForestClassifier has an accuracy of 97.04%
-
